@@ -1,6 +1,7 @@
 import uuid
 
 import httpx
+from fastapi import HTTPException, status
 
 from api.config import (
     TRELLO_API_KEY,
@@ -54,7 +55,13 @@ class TrelloService:
         else:
             raise ValueError(f"Invalid method: {method}")
 
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Error conecting to Trello API, have a valid token asociated with your user?",
+            )
         return response.json()
 
     @staticmethod
