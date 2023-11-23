@@ -1,5 +1,11 @@
 from services.auth.service import AuthService
-from services.users.models import UserCreate, UserDB, UserRead, UsersQuery
+from services.users.models import (
+    UserCreate,
+    UserDB,
+    UserRead,
+    UsersQuery,
+    UserUpdateModel,
+)
 from services.users.repo.base import UsersRepo
 
 
@@ -48,10 +54,20 @@ class UsersService:
         user = self.repo.get(query=query)
         if user is None:
             return None
-        return UserRead(
-            id=user.id,
-            username=user.username,
-        )
+        return UserRead(**user.model_dump())
+
+    def update(self, query: UsersQuery, data: UserUpdateModel) -> list[UserDB]:
+        """
+        Update users records in the database.
+
+        Args:
+            query (UsersQuery): The query used to filter users to update.
+            data (UserUpdate): The data to be update on users.
+
+        Returns:
+            list[UserRead]: The updated users list.
+        """
+        return self.repo.update(query=query, data=data)
 
     def authenticate(self, username: str, password: str) -> UserRead | None:
         """

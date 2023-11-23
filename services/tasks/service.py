@@ -1,8 +1,11 @@
 import uuid
 
+from api.config import TRELLO_TOKEN_USER_DATA_KEY
 from services.tasks.models import Task, TaskCreate, TasksQuery, TaskType
 from services.tasks.repo.base import TasksRepo
 from services.trello.service import TrelloService
+from services.users.models import UserDB
+from services.users.service import UsersService
 
 
 class TasksService:
@@ -14,11 +17,17 @@ class TasksService:
         trello_service (TrelloService): Service for getting and creating trello data.
     """
 
-    def __init__(self, repo: TasksRepo, trello_service: TrelloService):
+    def __init__(
+        self,
+        repo: TasksRepo,
+        users_service: UsersService,
+        trello_service: TrelloService,
+    ):
         self.repo = repo
+        self.users_service = users_service
         self.trello_service = trello_service
 
-    def create(self, task: TaskCreate, user: uuid.UUID) -> Task:
+    def create(self, task: TaskCreate, user: UserDB) -> Task:
         """
         Creates a new task with the given data and returns the created task.
 
@@ -28,11 +37,13 @@ class TasksService:
         Returns:
             Task: The created task.
         """
-        task_data = Task(**task.model_dump(), id=uuid.uuid4(), user=user)
+        task_data = Task(**task.model_dump(), id=uuid.uuid4(), user=user.id)
 
         if task.type == TaskType.TASK:
             task_data.trello_data = self.trello_service.create_task(
-                title=task_data.title, category=task_data.category
+                token=user.external_data.get(TRELLO_TOKEN_USER_DATA_KEY),
+                title=task_data.title,
+                category=task_data.category,
             )
 
         self.repo.create(task=task_data)

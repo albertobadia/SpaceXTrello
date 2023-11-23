@@ -25,7 +25,7 @@ def create(task: TaskCreate, user: UserDependsType):
     Returns:
         UserRead: The newly created user.
     """
-    return tasks_service.create(task=task, user=user.id)
+    return tasks_service.create(task=task, user=user)
 
 
 @router.get(

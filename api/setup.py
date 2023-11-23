@@ -10,7 +10,9 @@ db = InMemoryDB()
 users_repo = UsersMemoryRepo(db=db)
 users_service = UsersService(repo=users_repo)
 
-trello_service = TrelloService()
+trello_service = TrelloService(users_service=users_service)
 
 tasks_repo = TasksMemoryRepo(db=db)
-tasks_service = TasksService(repo=tasks_repo, trello_service=trello_service)
+tasks_service = TasksService(
+    repo=tasks_repo, users_service=users_service, trello_service=trello_service
+)

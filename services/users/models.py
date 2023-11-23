@@ -28,6 +28,8 @@ class UserDB(UserCreate):
     """
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    # This field is a flexible store to save data like trello user <-> local user relationship.
+    external_data: typing.Optional[dict] = Field(default_factory=dict)
 
 
 class UserRead(BaseModel):
@@ -41,6 +43,7 @@ class UserRead(BaseModel):
 
     id: uuid.UUID
     username: str
+    external_data: dict
 
 
 class UsersQuery(BaseModel):
@@ -54,3 +57,7 @@ class UsersQuery(BaseModel):
 
     id: typing.Optional[uuid.UUID] = None
     username: typing.Optional[str] = None
+
+
+class UserUpdateModel(BaseModel):
+    external_data: typing.Optional[dict] = None

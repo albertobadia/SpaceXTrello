@@ -1,5 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 
-class TrelloData(BaseModel):
-    data: dict = None
+class TrelloAuthURLResponse(BaseModel):
+    url: HttpUrl
+
+
+class TrelloUserTokenSet(BaseModel):
+    token: str
+
+
+class TrelloUserTokenSetResult(BaseModel):
+    result: bool

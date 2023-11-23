@@ -1,6 +1,6 @@
 import abc
 
-from services.users.models import UserDB, UsersQuery
+from services.users.models import UserDB, UsersQuery, UserUpdateModel
 
 
 class UsersRepo(abc.ABC):
@@ -42,5 +42,18 @@ class UsersRepo(abc.ABC):
 
         Returns:
             UserDB: The user retrieved from the database.
+        """
+        pass
+
+    @abc.abstractmethod
+    def update(self, query: UsersQuery, data: UserUpdateModel) -> UserDB:
+        """
+        Update some user data upserting every field on data.
+
+        Args:
+            query (UsersQuery): The query used to retrieve the users to update.
+
+        Returns:
+            UserDB: The updated version of the user in db
         """
         pass
