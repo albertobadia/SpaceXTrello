@@ -2,7 +2,7 @@ import uuid
 
 import httpx
 
-from api.config import TRELLO_API_KEY, TRELLO_TOKEN_USER_DATA_KEY
+from api.config import TRELLO_API_KEY, TRELLO_BOARD_NAME, TRELLO_TOKEN_USER_DATA_KEY
 from services.users.models import UsersQuery, UserUpdateModel
 from services.users.service import UsersService
 
@@ -133,12 +133,11 @@ class TrelloService:
         )
 
     def create_task(self, token: str, title: str = None, category: str = None) -> dict:
-        board_name = "SPACE_X_BOARD"
         list_name = "To Do"
 
-        board = next(iter(self.query_boards(token=token, name=board_name)), None)
+        board = next(iter(self.query_boards(token=token, name=TRELLO_BOARD_NAME)), None)
         if board is None:
-            board = self.create_board(token=token, name=board_name)
+            board = self.create_board(token=token, name=TRELLO_BOARD_NAME)
 
         trello_list = next(
             iter(self.query_lists(token=token, board_id=board["id"], name=list_name))
