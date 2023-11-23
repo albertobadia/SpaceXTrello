@@ -1,11 +1,16 @@
+import random
 import uuid
 
-from api.config import TRELLO_TOKEN_USER_DATA_KEY
+from faker import Faker
+
+from api.config import TRELLO_BOARD_NAME, TRELLO_TOKEN_USER_DATA_KEY
 from services.tasks.models import Task, TaskCreate, TasksQuery, TaskType
 from services.tasks.repo.base import TasksRepo
 from services.trello.service import TrelloService
 from services.users.models import UserDB
 from services.users.service import UsersService
+
+faker = Faker()
 
 
 class TasksService:
@@ -37,17 +42,50 @@ class TasksService:
         Returns:
             Task: The created task.
         """
-        task_data = Task(**task.model_dump(), id=uuid.uuid4(), user=user.id)
+        list_name = "To Do"
+
+        task = Task(**task.model_dump(), id=uuid.uuid4(), user=user.id)
+        token = user.external_data.get(TRELLO_TOKEN_USER_DATA_KEY)
+
+        board = self.trello_service.get_or_create_board(
+            token=token, name=TRELLO_BOARD_NAME
+        )
+        trello_list = self.trello_service.get_or_create_list(
+            token=token, board_id=board["id"], name=list_name
+        )
+
+        members = []
+        labels = []
 
         if task.type == TaskType.TASK:
-            task_data.trello_data = self.trello_service.create_task(
-                token=user.external_data.get(TRELLO_TOKEN_USER_DATA_KEY),
-                title=task_data.title,
-                category=task_data.category,
+            label = self.trello_service.get_or_create_label(
+                token=token, board_id=board["id"], name=task.category.value
             )
+            labels = [label["id"]]
 
-        self.repo.create(task=task_data)
-        return task_data
+        if task.type == TaskType.BUG:
+            task.title = f"bug-{faker.word()}-{str(random.randint(0, 99999)).zfill(5)}"
+            label = self.trello_service.get_or_create_label(
+                token=token, board_id=board["id"], name="BUG"
+            )
+            labels = [label["id"]]
+            members = [
+                random.choice(
+                    self.trello_service.get_board_members(
+                        token=token, board_id=board["id"]
+                    )
+                )["id"]
+            ]
+
+        task.trello_data = self.trello_service.create_card(
+            token=token,
+            list_id=trello_list["id"],
+            name=task.title,
+            description=task.description,
+            labels=labels,
+            members=members,
+        )
+        return self.repo.create(task=task)
 
     def query(self, query: TasksQuery) -> list[Task]:
         """

@@ -2,7 +2,12 @@ import uuid
 
 import httpx
 
-from api.config import TRELLO_API_KEY, TRELLO_BOARD_NAME, TRELLO_TOKEN_USER_DATA_KEY
+from api.config import (
+    TRELLO_API_KEY,
+    TRELLO_TOKEN_EXPIRATION,
+    TRELLO_TOKEN_NAME,
+    TRELLO_TOKEN_USER_DATA_KEY,
+)
 from services.users.models import UsersQuery, UserUpdateModel
 from services.users.service import UsersService
 
@@ -20,10 +25,8 @@ class TrelloService:
     @property
     def authorization_url(self) -> str:
         base_url = "https://trello.com/1/authorize"
-        expiration = "1day"
-        token_name = "SpaceXTrelloAPI"
         scope = "read,write"
-        return f"{base_url}?expiration={expiration}&name={token_name}&scope={scope}&response_type=token&key={TRELLO_API_KEY}"
+        return f"{base_url}?expiration={TRELLO_TOKEN_EXPIRATION}&name={TRELLO_TOKEN_NAME}&scope={scope}&response_type=token&key={TRELLO_API_KEY}"
 
     def set_user_trello_token(self, user_id: uuid.UUID, token: str) -> bool:
         query = UsersQuery(id=user_id)
@@ -105,6 +108,19 @@ class TrelloService:
             token=token, method="POST", endpoint=endpoint, params=params
         )
 
+    def get_or_create_board(self, token: str, name: str) -> dict:
+        board = next(
+            iter(self.query_boards(token=token, name=name)),
+            None,
+        )
+        if board is None:
+            board = self.create_board(token=token, name=name)
+        return board
+
+    def get_board_members(self, token: str, board_id: str):
+        endpoint = f"/boards/{board_id}/members"
+        return self._request(token=token, method="GET", endpoint=endpoint)
+
     def create_list(self, token: str, board_id: str, name: str) -> list[dict]:
         endpoint = "/lists"
         params = {"name": name, "idBoard": board_id}
@@ -112,48 +128,50 @@ class TrelloService:
             token=token, method="POST", endpoint=endpoint, params=params
         )
 
+    def get_or_create_list(self, token: str, board_id: str, name: str) -> dict:
+        trello_list = next(
+            iter(self.query_lists(token=token, board_id=board_id, name=name))
+        )
+        if trello_list is None:
+            trello_list = self.create_list(token=token, board_id=board_id, name=name)
+        return trello_list
+
     def create_label(
         self, token: str, board_id: str, color: str = None, name: str = None
-    ):
+    ) -> dict:
         endpoint = f"/labels/"
         params = {"idBoard": board_id, "color": color, "name": name}
         return self._request(
             token=token, method="POST", endpoint=endpoint, params=params
         )
 
-    def create_card(
-        self, token: str, list_id: str, name: str, desc=None, labels: list[str] = None
-    ) -> dict:
-        endpoint = "/cards/"
-        params = {"idList": list_id, "name": name, "idLabels": labels or []}
-        if desc:
-            params["desc"] = desc
-        return self._request(
-            token=token, method="POST", endpoint=endpoint, params=params
-        )
-
-    def create_task(self, token: str, title: str = None, category: str = None) -> dict:
-        list_name = "To Do"
-
-        board = next(iter(self.query_boards(token=token, name=TRELLO_BOARD_NAME)), None)
-        if board is None:
-            board = self.create_board(token=token, name=TRELLO_BOARD_NAME)
-
-        trello_list = next(
-            iter(self.query_lists(token=token, board_id=board["id"], name=list_name))
-        )
-        if trello_list is None:
-            trello_list = self.create_list(
-                token=token, board_id=board["id"], name=list_name
-            )
-
+    def get_or_create_label(self, token: str, board_id: str, name: str) -> dict:
         label = next(
-            iter(self.query_labels(token=token, board_id=board["id"], name=category)),
+            iter(self.query_labels(token=token, board_id=board_id, name=name)),
             None,
         )
         if label is None:
-            label = self.create_label(token=token, board_id=board["id"], name=category)
+            label = self.create_label(token=token, board_id=board_id, name=name)
+        return label
 
-        return self.create_card(
-            token=token, list_id=trello_list["id"], name=title, labels=[label["id"]]
+    def create_card(
+        self,
+        token: str,
+        list_id: str,
+        name: str,
+        description=None,
+        labels: list[str] = None,
+        members: list[str] = None,
+    ) -> dict:
+        endpoint = "/cards/"
+        params = {
+            "idList": list_id,
+            "name": name,
+            "idLabels": labels or [],
+            "idMembers": members or [],
+        }
+        if description:
+            params["desc"] = description
+        return self._request(
+            token=token, method="POST", endpoint=endpoint, params=params
         )

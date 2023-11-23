@@ -1,5 +1,6 @@
-services:
+version: '3'
 
+services:
   api:
     build: .
     ports:
