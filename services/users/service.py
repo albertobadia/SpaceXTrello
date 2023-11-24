@@ -1,11 +1,5 @@
 from services.auth.service import AuthService
-from services.users.models import (
-    UserCreate,
-    UserDB,
-    UserRead,
-    UsersQuery,
-    UserUpdateModel,
-)
+from services.users.models import UserCreate, UserDB, UserRead, UsersQuery, UserUpdate
 from services.users.repo.base import UsersRepo
 
 
@@ -56,7 +50,7 @@ class UsersService:
             return None
         return UserRead(**user.model_dump())
 
-    def update(self, query: UsersQuery, data: UserUpdateModel) -> list[UserDB]:
+    def update(self, query: UsersQuery, data: UserUpdate) -> list[UserDB]:
         """
         Update users records in the database.
 

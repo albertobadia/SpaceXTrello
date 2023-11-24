@@ -1,7 +1,30 @@
 version: '3'
 
+volumes:
+  redis:
+  rethinkdb:
+
 services:
+
   api:
     build: .
     ports:
       - "8000:8000"
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes: 
+      - redis:/data
+
+  rethinkdb:
+    image: rethinkdb
+    restart: always
+    ports:
+      - "8080:8080"
+      - "28015:28015"
+      - "29015:29015"
+    volumes:
+      - rethinkdb:/data

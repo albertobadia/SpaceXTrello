@@ -1,6 +1,6 @@
 import abc
 
-from services.users.models import UserDB, UsersQuery, UserUpdateModel
+from services.users.models import UserDB, UsersQuery, UserUpdate
 
 
 class UsersRepo(abc.ABC):
@@ -46,7 +46,7 @@ class UsersRepo(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def update(self, query: UsersQuery, data: UserUpdateModel) -> UserDB:
+    def update(self, query: UsersQuery, data: UserUpdate) -> UserDB:
         """
         Update some user data upserting every field on data.
 

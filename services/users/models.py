@@ -1,3 +1,4 @@
+import json
 import typing
 import uuid
 
@@ -58,6 +59,38 @@ class UsersQuery(BaseModel):
     id: typing.Optional[uuid.UUID] = None
     username: typing.Optional[str] = None
 
+    @property
+    def query_dict(self) -> dict:
+        """
+        Returns a dictionary representation of the query.
 
-class UserUpdateModel(BaseModel):
+        Returns:
+            dict: The dictionary representation of the query.
+        """
+        return {k: v for k, v in self.model_dump().items() if v is not None}
+
+    @property
+    def query_json(self) -> str:
+        """
+        Returns a JSON representation of the query.
+
+        Returns:
+            str: The JSON representation of the query.
+        """
+        return {
+            k: v for k, v in json.loads(self.model_dump_json()).items() if v is not None
+        }
+
+
+class UserUpdate(BaseModel):
     external_data: typing.Optional[dict] = None
+
+    @property
+    def update_dict(self) -> dict:
+        return {k: v for k, v in self.model_dump().items() if v is not None}
+
+    @property
+    def update_json(self) -> dict:
+        return {
+            k: v for k, v in json.loads(self.model_dump_json()).items() if v is not None
+        }

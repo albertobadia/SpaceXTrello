@@ -1,5 +1,5 @@
 from api.db.memory import InMemoryDB
-from services.users.models import UserDB, UsersQuery, UserUpdateModel
+from services.users.models import UserDB, UsersQuery, UserUpdate
 from services.users.repo.base import UsersRepo
 
 
@@ -34,8 +34,8 @@ class UsersMemoryRepo(UsersRepo):
             return None
         return result[0]
 
-    def update(self, query: UsersQuery, data: UserUpdateModel) -> list[UserDB]:
+    def update(self, query: UsersQuery, data: UserUpdate) -> list[UserDB]:
         users = self.query(query=query)
         for user in users:
-            self.db.update(table=self.table, id=user.id, data=data.model_dump())
+            self.db.update(table=self.table, id=user.id, data=data.update_dict)
         return self.query(query=query)

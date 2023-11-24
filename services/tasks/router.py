@@ -17,13 +17,11 @@ router = APIRouter(tags=["tasks"])
 )
 def create(task: TaskCreate, user: UserDependsType):
     """
-    Creates a new user with the given user data.
+    Creates a new task with the given data and returns the created task.
 
     Args:
-        user (UserCreate): The user data to create the new user with.
-
-    Returns:
-        UserRead: The newly created user.
+        task (Task): The data for the task to be created.
+        user (UserDependsType): The user that is creating the task.
     """
     return tasks_service.create(task=task, user=user)
 
@@ -37,6 +35,13 @@ def query(
     user: UserDependsType,
     status: typing.Optional[TaskStatus] = None,
 ) -> list[Task]:
+    """
+    Queries the repository for tasks that match the given query.
+
+    Args:
+        user (UserDependsType): The user that is querying the tasks.
+        status (TaskStatus): The status of the tasks to query.
+    """
     query = TasksQuery(user=user.id, status=status)
     return tasks_service.query(query=query)
 
@@ -47,6 +52,13 @@ def query(
     response_model=Task,
 )
 def get(id: uuid.UUID, user: UserDependsType) -> Task:
+    """
+    Gets a task with the given id.
+
+    Args:
+        id (uuid.UUID): The id of the task to get.
+        user (UserDependsType): The user that is getting the task.
+    """
     query = TasksQuery(id=id, user=user.id)
 
     tasks = tasks_service.query(query=query)

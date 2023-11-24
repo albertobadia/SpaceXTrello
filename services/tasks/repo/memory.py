@@ -1,5 +1,5 @@
 from api.db.memory import InMemoryDB
-from services.tasks.models import Task, TasksQuery
+from services.tasks.models import Task, TasksQuery, TaskUpdate
 from services.tasks.repo.base import TasksRepo
 
 
@@ -36,3 +36,8 @@ class TasksMemoryRepo(TasksRepo):
         if not result:
             return None
         return result[0]
+
+    def update(self, query: TasksQuery, data: TaskUpdate) -> list[Task]:
+        for task in self.query(query=query):
+            self.db.update(table=self.table, data=data.update_dict, id=task.id)
+        return self.query(query=query)

@@ -29,7 +29,7 @@ def create_user(user: UserCreate):
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken"
-        )
+        ) from e
     return UserRead(**user.model_dump())
 
 
