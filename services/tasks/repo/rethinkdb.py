@@ -55,7 +55,7 @@ class RethinkDBTasksRepo(TasksRepo):
         Args:
             query (TasksQuery): The query to match.
         """
-        return next(iter(self.query(query=query)))
+        return next(iter(self.query(query=query)), None)
 
     def update(self, query: TasksQuery, data: TaskUpdate) -> list[Task]:
         """

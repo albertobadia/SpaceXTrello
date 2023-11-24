@@ -6,11 +6,6 @@ volumes:
 
 services:
 
-  api:
-    build: .
-    ports:
-      - "8000:8000"
-
   redis:
     image: redis
     restart: always
@@ -18,7 +13,7 @@ services:
       - "6379:6379"
     volumes: 
       - redis:/data
-
+  
   rethinkdb:
     image: rethinkdb
     restart: always
@@ -28,3 +23,20 @@ services:
       - "29015:29015"
     volumes:
       - rethinkdb:/data
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - rethinkdb
+  
+  worker:
+    build: .
+    depends_on:
+      - redis
+      - rethinkdb
+    entrypoint: rq worker tasks -u redis://redis:6379
+    environment:
+      - OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES

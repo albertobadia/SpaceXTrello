@@ -28,3 +28,4 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [commit]
+        entry: env TESTING=1 pytest

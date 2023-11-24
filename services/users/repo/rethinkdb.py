@@ -28,7 +28,7 @@ class RethinkDBUsersRepo(UsersRepo):
         ]
 
     def get(self, query: UsersQuery) -> UserDB:
-        return next(iter(self.query(query=query)))
+        return next(iter(self.query(query=query)), None)
 
     def update(self, query: UsersQuery, data: UserUpdate) -> list[UserDB]:
         get_or_create_table(self.table).filter(query.query_json).update(
