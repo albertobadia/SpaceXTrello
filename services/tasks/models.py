@@ -124,6 +124,13 @@ class TaskUpdate(BaseModel):
     trello_data: typing.Optional[dict] = None
 
     @property
+    def update_dict(self):
+        """
+        Returns the update as a dict.
+        """
+        return {k: v for k, v in self.model_dump().items() if v is not None}
+
+    @property
     def update_json(self):
         """
         Returns the update as a JSON object.

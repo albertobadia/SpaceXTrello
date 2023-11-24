@@ -1,7 +1,7 @@
+from fakeredis import FakeStrictRedis
 from rq import Queue
 
 from api.db.memory import InMemoryDB
-from api.db.redis import redis_connection
 from services.tasks.repo.memory import TasksMemoryRepo
 from services.tasks.service import TasksService
 from services.trello.service import TrelloService
@@ -9,8 +9,7 @@ from services.users.repo.memory import UsersMemoryRepo
 from services.users.service import UsersService
 
 db = InMemoryDB()
-rq_queue = Queue(name="tasks", connection=redis_connection)
-
+rq_queue = Queue(name="tasks", is_async=False, connection=FakeStrictRedis())
 
 users_repo = UsersMemoryRepo(db=db)
 users_service = UsersService(repo=users_repo)

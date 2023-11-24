@@ -13,7 +13,8 @@ class TasksMemoryRepo(TasksRepo):
         return Task(**self.db.create(table=self.table, data=task.model_dump()))
 
     def _filter_entry(self, entry: dict, query: TasksQuery) -> bool:
-        if query.id and not query.id == entry.get["id"]:
+        if query.id and not query.id == entry.get("id"):
+            print(query)
             return False
 
         if query.user and not query.user == entry.get("user"):

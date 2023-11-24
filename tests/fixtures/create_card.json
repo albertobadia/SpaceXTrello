@@ -1,0 +1,78 @@
+{
+    "id": "6560300953443fd08a670ba2",
+    "badges": {
+        "attachmentsByType": {
+            "trello": {
+                "board": 0,
+                "card": 0
+            }
+        },
+        "location": false,
+        "votes": 0,
+        "viewingMemberVoted": false,
+        "subscribed": true,
+        "fogbugz": "",
+        "checkItems": 0,
+        "checkItemsChecked": 0,
+        "checkItemsEarliestDue": null,
+        "comments": 0,
+        "attachments": 0,
+        "description": true,
+        "due": null,
+        "dueComplete": false,
+        "start": null
+    },
+    "checkItemStates": [],
+    "closed": false,
+    "dueComplete": false,
+    "dateLastActivity": "2023-11-24T05:09:29.719Z",
+    "desc": "Nothing works",
+    "descData": {
+        "emoji": {}
+    },
+    "due": null,
+    "dueReminder": null,
+    "email": null,
+    "idBoard": "6560300798dc3acda8c8b6ed",
+    "idChecklists": [],
+    "idList": "6560300798dc3acda8c8b6f4",
+    "idMembers": [
+        "5f43ca0bd4c64c417e308c26"
+    ],
+    "idMembersVoted": [],
+    "idShort": 1,
+    "idAttachmentCover": null,
+    "labels": [
+        {
+            "id": "6560300855b2566adf719fc6",
+            "idBoard": "6560300798dc3acda8c8b6ed",
+            "name": "BUG",
+            "color": null,
+            "uses": 1
+        }
+    ],
+    "idLabels": [
+        "6560300855b2566adf719fc6"
+    ],
+    "manualCoverAttachment": false,
+    "name": "bug-suggest-98558",
+    "pos": 16384,
+    "shortLink": "SNP8QSXq",
+    "shortUrl": "https://trello.com/c/SNP8QSXq",
+    "start": null,
+    "subscribed": true,
+    "url": "https://trello.com/c/SNP8QSXq/1-bug-suggest-98558",
+    "cover": {
+        "idAttachment": null,
+        "color": null,
+        "idUploadedBackground": null,
+        "size": "normal",
+        "brightness": "dark",
+        "idPlugin": null
+    },
+    "isTemplate": false,
+    "cardRole": null,
+    "attachments": [],
+    "stickers": [],
+    "limits": {}
+}
