@@ -50,6 +50,7 @@ docker-compose up --build
      ```json
      {"username": "YourUser", "password": "YourPassword"}
      ```
+     Now you can use this token to authenticate your requests to the API.
 
 2. **Trello Registration and Authorization:**
 
@@ -76,6 +77,8 @@ docker-compose up --build
        ```json
        {"type": "TASK", "title": "Title", "category": "Category"}
        ```
+
+    - After creating a task, you can view it at `/tasks/` and `/tasks/{id}/`. The status will be `PENDING` until it is created in Trello by the background task.
 
 ## OpenAPI Documentation
 

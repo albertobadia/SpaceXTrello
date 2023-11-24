@@ -1,6 +1,6 @@
 import uuid
 
-from rq import Queue
+from rq import Queue, Retry
 
 from services.tasks.models import Task, TaskCreate, TasksQuery
 from services.tasks.repo.base import TasksRepo
@@ -43,7 +43,9 @@ class TasksService:
         """
 
         task = Task(**task.model_dump(), id=uuid.uuid4(), user=user.id)
-        self.queue.enqueue(create_trello_task, task, user)
+        self.queue.enqueue(
+            create_trello_task, task, user, retry=Retry(max=6, interval=30)
+        )
         return self.repo.create(task=task)
 
     def query(self, query: TasksQuery) -> list[Task]:
